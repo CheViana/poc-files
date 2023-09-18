@@ -1,0 +1,15 @@
+1. anthos, create new cluster, autopilot
+2. install anthos service mesh into cluster
+3. create gateway https://cloud.google.com/service-mesh/docs/unified-install/install-anthos-service-mesh#install_gateways 
+4. install knative with operator https://knative.dev/docs/install/operator/knative-with-operators/ 
+5. remove the domain-update job (it doesn't work)
+5. update config-domain ConfigMap to resolve DNS using sslip.io - IP is IP of Istio Ingress created in step 3. {data: {"35.238.72.54.sslip.io": ""}}
+6. try to create example event source/trigger/broker, cloudplayer tutorial
+7. create airflow via cloud composer in another region
+
+
+example input web app curl:
+
+curl --request POST -H "Content-Type: application/json" --data '{"filepath": "/home/jane/Documents/airflow/inputfiles/lorem2.txt", "email": "myemail.com"}' http://localhost:8081/run/count_en_words
+
+how to start input web app: python webapps/input.py
