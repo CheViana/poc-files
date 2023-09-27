@@ -37,6 +37,7 @@ async def run(request):
     try:
         file_path = data['filepath']
         email = data['email']
+        appversion = data.get("appversion", "1.0.0")
         print(f"File path {file_path}, email {email}, cmd {cmd}")
     except (KeyError, TypeError, ValueError) as e:
         raise web.HTTPBadRequest(
@@ -46,7 +47,8 @@ async def run(request):
         "logical_date": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds'), # + "Z",
         "conf": {
             "filepath": file_path,
-            # "email": email
+            "email": email,
+            "appversion": appversion
         },
     }
     print(f"DAG data {dag_data}")
@@ -67,4 +69,4 @@ async def run(request):
 app.add_routes([web.post('/run/{cmd}', run)])
 app.add_routes([web.post('/run/{cmd}/', run)])
 app.add_routes([web.get('/', hello)])
-web.run_app(app, port=8081)
+web.run_app(app, port=8085)
