@@ -1,6 +1,7 @@
 from aiohttp import web, ClientSession, BasicAuth
 import datetime
 import json
+import functools
 from time import sleep
 from google.cloud import storage, storage_transfer_v1
 
@@ -59,6 +60,65 @@ async def hello(request):
     return web.Response(text="Hello, world")
 
 
+# version 2 additions
+def signal_result():
+    def wrapper(func):
+        @functools.wraps(func)
+        async def wrapped(*args, **kwargs):
+            
+            request = args[0]
+            data = await request.json()
+            callback_broker = data.get('callback_broker', None)
+            callback_key = data.get('callback_key', None)
+            results = None
+            ex = None
+
+            try:
+                results = await func(*args, **kwargs)
+            except Exception as exc:
+                ex = exc
+                print(f'Error while processing request: {ex}')
+
+            if not callback_broker or not callback_key:
+                print('No callback provided')
+                if ex:
+                    raise ex
+                return results
+            
+            try:
+                # fire callback event
+                async with ClientSession() as session:
+                    async with session.post(
+                        callback_broker,
+                        json={
+                            'status': 'bad' if ex else 'good',
+                            'key': callback_key
+                        },
+                        headers={
+                            'Content-Type': 'application/json',
+                            "Ce-Id": f"event_callback_{callback_key}",
+                            "Ce-Specversion": "1.0",
+                            "Ce-Type": "count-en",
+                            "Ce-Source": "local-dag-count-en-words",
+                            "Ce-Appversion": "2.0.0",
+                            "Ce-callbackkey": callback_key
+                        }
+                    ) as resp:
+                        status = resp.status
+                        response_text = await resp.text()
+                        print(f"Fired callback {status} {response_text}")
+            except Exception as exc:
+                print(f"Got error while firing callback {exc}")
+
+            if ex:
+                raise ex
+            return results
+        return wrapped
+    return wrapper
+# end version 2 additions
+
+
+@signal_result()
 async def count_en(request):
     data = await request.json()
     print(data)
@@ -66,9 +126,8 @@ async def count_en(request):
         words_list_filename = data['words_list_filename']
         results_filename = data['results_filename']
         transfer_operation_name = data['transfer_operation_name']
-        callback_broker = data['callback_broker_url']
-        callback_key = data['callback_key']
     except (KeyError, TypeError, ValueError) as e:
+        print(f"Cant unpack required params: {e}")
         raise web.HTTPBadRequest(
             text='Missing required values') from e
 
@@ -90,33 +149,12 @@ async def count_en(request):
     
     # version 2 additions
     wait_on_transfer_job(transfer_operation_name)
-
-    try:
-        # fire callback event
-        async with ClientSession().post(
-            callback_broker,
-            json={
-                'results_filename': results_filename,
-                'key': callback_key
-            },
-            headers={
-                'Content-Type': 'application/json',
-                "Ce-Id": f"event_{get_random_str()}",
-                "Ce-Specversion": "1.0",
-                "Ce-Type": "count-en",
-                "Ce-Source": "local-dag-count-en-words",
-                "Ce-Appversion": "2.0.0",
-                "Ce-callback-key": callback_key
-            }
-        ) as resp:
-            status = resp.status
-            response_json = await resp.json()
-            print(f"Fired callback {status} {response_json}")
-    except Exception as ex:
-        print(f"Got error while firing callback {ex}")
     # end version 2 additions
 
-    return web.Response(text=json.dumps({"results_filename": results_filename, "results_transfer_job_name": operation_name}))
+    return web.Response(text=json.dumps({
+        "results_filename": results_filename,
+        "results_transfer_job_name": operation_name
+    }))
 
 
 app.add_routes([web.post('/count-en/', count_en)])

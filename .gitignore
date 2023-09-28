@@ -1,8 +1,8 @@
 /inputfiles/**/*
 /textfiles/**/*
 /**/*.pyc
-/**/__pycache__/*
-results/*
-dags/__pycache__/*
+/**/__pycache__/*.*
+results/*.*
+dags/__pycache__/*.*
 dags/charged-scholar-399420-ab7ede7e134a.json
 webapps/count-en/charged-scholar-399420-ab7ede7e134a.json

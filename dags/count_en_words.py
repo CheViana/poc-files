@@ -57,21 +57,44 @@ def count_en_words():
 
         return random_str
     
+    # @task
+    # def trigger_data_transfer(*args, **kwargs):
+    #     client = storage_transfer_v1.StorageTransferServiceClient.from_service_account_json(GCP_CREDS_PATH)
+    #     request = storage_transfer_v1.RunTransferJobRequest(
+    #         job_name="transferJobs/OPI8437548298833795632",
+    #         project_id="charged-scholar-399420",
+    #     )
+    #     try:
+    #         operation = client.run_transfer_job(request=request)
+    #         print(operation.operation.name)
+    #         return operation.operation.name
+    #     except AlreadyExists:
+    #         print('Transfer already running')
+    #         # TODO get operation name?
+    #     return ''
+
     @task
     def trigger_data_transfer(*args, **kwargs):
+
+        response = requests.post(
+            'http://localhost:8084/call-test-event?path=knative-eventing%2Fcount-en-broker',
+        )
+        response.raise_for_status()
+        job_data = response.json()
+
         client = storage_transfer_v1.StorageTransferServiceClient.from_service_account_json(GCP_CREDS_PATH)
         request = storage_transfer_v1.RunTransferJobRequest(
-            job_name="transferJobs/OPI8437548298833795632",
-            project_id="charged-scholar-399420",
+            job_name=job_data["job_name"],
+            project_id=job_data["project_id"],
         )
         try:
             operation = client.run_transfer_job(request=request)
             print(operation.operation.name)
-            return operation.operation.name
+            return (operation.operation.name, job_data["ingress"])
         except AlreadyExists:
             print('Transfer already running')
             # TODO get operation name?
-        return ''
+        return (None, None)
     
     @task
     def invoke_remote_en_count(*args, **kwargs):
@@ -79,13 +102,15 @@ def count_en_words():
         random_str = task_instance.xcom_pull(task_ids='create_words_list')
         results_filename = f'results_{random_str}.txt'
         words_list_filename = f'words_list_{random_str}.txt'
-        operation_name = task_instance.xcom_pull(task_ids='trigger_data_transfer')
+        operation_name, ingress = task_instance.xcom_pull(task_ids='trigger_data_transfer')
         response = requests.post(
-            'http://localhost:8084/call?path=knative-eventing%2Fcount-en-broker',
+            f'http://{ingress}/knative-eventing/count-en-broker',
             json={
                 "words_list_filename": words_list_filename,
                 "results_filename": results_filename,
-                "transfer_operation_name": operation_name
+                "transfer_operation_name": operation_name,
+                "callback_broker": "http://kafka-broker-ingress.knative-eventing.svc.cluster.local/knative-eventing/fake-local-broker",
+                "callback_key": random_str,
             },
             headers={
                 'Content-Type': 'application/json',
@@ -110,19 +135,17 @@ def count_en_words():
             print(results)
         return str(results)
 
+    # instead of sense_the_results:
+    # listen to kafka topic (the one in fake-local-broker) for msg with callback_key and matching appversion
     sense_the_results = FileSensor(  # can be defered trigger and not occupy the slot
         task_id='sense_the_results',
         filepath=RESULTS_PATH.format("{{ task_instance.xcom_pull(task_ids='create_words_list') }}"),
         poke_interval=3
     )
 
-    # instead of sense_the_results:
-    # listen to kafka topic (count-en-receiver) for msg with callback_key and matching appversion
-
     @task
     def get_email(*args, **kwargs):
         return kwargs['dag_run'].conf.get('email')
-
 
     # send_email = EmailOperator( 
     #     task_id='send_email', 
