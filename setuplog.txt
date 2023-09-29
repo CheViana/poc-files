@@ -27,7 +27,7 @@ gcloud projects add-iam-policy-binding charged-scholar-399420 \
 
 cluster - https://knative.dev/blog/articles/single-node-kafka-development/
 
-wget -O - -S --post-data '{"msg":"Hello CloudEvents!"}' --header "Content-Type: application/json" --header "Ce-Id: 123131455" --header "Ce-Specversion: 1.0" --header "Ce-Type: heartbeat" --header "Ce-Source: command-line" http://kafka-broker-ingress.knative-eventing.svc.cluster.local/knative-eventing/count-en-broker
+wget -O - -S --post-data '{"msg":"Hello CloudEvents!"}' --header "Content-Type: application/json" --header "Ce-Id: 123131455" --header "Ce-Specversion: 1.0" --header "Ce-Type: heartbeat" --header "Ce-Source: command-line" http://kafka-broker-ingress.knative-eventing.svc.cluster.local/knative-eventing/fake-local-broker
 
 
 wget -O - -S --post-data '{"msg":"Hello from outside!"}' --header "Content-Type: application/json" --header "Ce-Id: 123131455" --header "Ce-Specversion: 1.0" --header "Ce-Type: heartbeat" --header "Ce-Source: command-line" http://34.41.248.142:80/knative-eventing/count-en-broker

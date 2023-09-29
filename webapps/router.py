@@ -2,12 +2,13 @@ from aiohttp import web, ClientSession, BasicAuth
 import datetime
 import secrets
 import string
+import os
 
 app = web.Application()
 
 cluster_ingresses = [
     "localhost:7777",
-    "34.41.248.142:80"
+    os.getenv("KN_POC_BROKER_LB", "34.41.248.142:80")
 ]
 
 async def on_startup(app):

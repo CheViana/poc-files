@@ -1,0 +1,36 @@
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: count-en-v2-trigger
+  namespace: knative-eventing
+spec:
+  broker: count-en-broker
+  filter:
+    attributes:
+      appversion: 2.0.0
+      type: count-en
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: count-en-v2-service
+    uri: /count-en/
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: count-en-trigger
+  namespace: knative-eventing
+spec:
+  broker: count-en-broker
+  filter:
+    attributes:
+      appversion: 2.0.0
+      type: count-en
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: count-en-service
+    uri: /count-en/
+---

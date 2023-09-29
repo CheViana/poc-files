@@ -1,10 +1,11 @@
 from aiohttp import web, ClientSession, BasicAuth
 import datetime
+import os
 
 
-AIRFLOW_API = "http://localhost:8080/api/v1"
-AIRFLOW_USER = 'jane'
-AIRFLOW_PASSWORD = 'jane'
+AIRFLOW_API = os.getenv("KN_POC_AIRFLOW_API", "http://localhost:8080/api/v1")
+AIRFLOW_USER = os.getenv("KN_POC_AIRFLOW_USER", 'jane')
+AIRFLOW_PASSWORD = os.getenv("KN_POC_AIRFLOW_PASSWORD", 'jane')
 
 
 app = web.Application()

@@ -9,15 +9,17 @@ import json
 import string
 import secrets
 import requests
+import os
 from google.cloud import storage_transfer_v1
 from google.api_core.exceptions import AlreadyExists
 
 
-FILE_PATH = '/home/jane/Documents/airflow/inputfiles/lorem.txt'
-REF_DICT = '/home/jane/Documents/airflow/textfiles/dict.txt'
-RESULTS_PATH = '/home/jane/Documents/airflow/results/results_{}.txt'
-WORD_LIST_PATH = '/home/jane/Documents/airflow/textfiles/words_list_{}.txt'
-GCP_CREDS_PATH = '/home/jane/Documents/airflow/dags/charged-scholar-399420-ab7ede7e134a.json'
+BASE_PATH = os.getenv('KN_POC_HOME', '/home/jane/Documents/airflow')
+FILE_PATH = f'{BASE_PATH}/inputfiles/lorem.txt'
+REF_DICT = f'{BASE_PATH}/textfiles/dict.txt'
+RESULTS_PATH = f'{BASE_PATH}/results/results_{}.txt'
+WORD_LIST_PATH = f'{BASE_PATH}/textfiles/words_list_{}.txt'
+GCP_CREDS_PATH = f'{BASE_PATH}/dags/gcp-creds.json'
 
 default_args = {"start_date": datetime(2023, 8, 29)}
 

@@ -1,0 +1,8 @@
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  name: count-en-broker
+  namespace: knative-eventing
+  annotations:
+    eventing.knative.dev/broker.class: Kafka
+spec: {}

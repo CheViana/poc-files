@@ -2,15 +2,16 @@ from aiohttp import web, ClientSession, BasicAuth
 import datetime
 import json
 import functools
+import os
 from time import sleep
 from google.cloud import storage, storage_transfer_v1
 
 
 app = web.Application()
 REF_DICT = 'dict.txt'
-WORDS_LIST_BUCKET = "river-sand"
-RESULTS_BUCKET = "river-sand"
-GCP_CREDS_PATH = "charged-scholar-399420-ab7ede7e134a.json"
+WORDS_LIST_BUCKET = os.getenv("KN_POC_BUCKET_WORDSLIST", "river-sand")
+RESULTS_BUCKET = os.getenv("KN_POC_BUCKET_RESULTS", "river-sand")
+GCP_CREDS_PATH = "gcp-creds.json"
 
 
 def get_random_str():
