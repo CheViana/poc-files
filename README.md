@@ -1,5 +1,7 @@
 Diagram https://confluence.ncbi.nlm.nih.gov/display/~radetska/PoC+Diagram
 
+This is a primitive PoC for cross cluster data processing. Diagram shows the parts of it. Some parts in PoC are not like what they would be in better circumstance. In better circumstance, it would be an ideantical setup in each cluster: airflow with DAGs, DAG listens to kafka topic (for launch, and instead of waiting on file), knative broker and triggers, and data storage with transfer jobs. 
+
 
 # Setup kn-PoC-v0.1 from scratch
 
