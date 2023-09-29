@@ -3,7 +3,7 @@ Diagram https://confluence.ncbi.nlm.nih.gov/display/~radetska/PoC+Diagram
 
 # Setup kn-PoC-v0.1 from scratch
 
-Prereqs: Linux machine with python3.10, GCP cloud account with ability to create small cluster.
+Prereqs: machine with python3.10 (or any py3.9+), GCP cloud account with ability to create small cluster.
 Checkout this repo to local machine.
 Export path where it got checked out as `KN_POC_HOME` env var:
 
