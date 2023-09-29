@@ -16,17 +16,17 @@ Ensure this env var and env vars created further will be available throughout yo
 ### Create GKE cluster
 
 Create GCP project.
-Create GKE cluster - one zone, at least 3 nodes, 6 vCPU, 24Gb mem, disk type standard 100Gb is fine.
+Create GKE cluster - one zone, at least 3 nodes. 2 vCPU, 8Gb mem, disk type standard 100Gb is fine for one node.
 
 ### Bucket and transfer jobs
 
-Create Google storage bucket. Save it's name. Add 2 directories in it: *words-list* and *results*.
+Create Google storage bucket in the GCP project that was just created. Save it's name.
+Add 2 directories in the bucket: *words-list* and *results*. Alt, create 2 buckets and put directory *words-list* in one and *results* into another.
 Create 2 [Google storage transfer jobs](https://cloud.google.com/storage-transfer/docs/create-transfers):
 - from local directory `${KN_POC_HOME}/textfiles` to GS bucket/words-list
 - from GS bucket/results to local directory `${KN_POC_HOME}/results`
 
-Create service account that has permissions to run transfer jobs: role Storage Transfer User.
-Generate keys for the service account. Save them to local files in this repo:
+Create service account that has permissions to run transfer jobs (role Storage Transfer User), and that can edit/create files in the buckets (role Storage Object User). Generate keys for the service account. Save them to local files in this repo:
 
 - `dags/gcp-creds.json`
 - `webapps/count-en/gcp-creds.json`
@@ -36,7 +36,7 @@ Generate keys for the service account. Save them to local files in this repo:
 Follow 
 https://knative.dev/blog/articles/from-cloudevent-to-apach-kafka-records-part-one/
 https://knative.dev/blog/articles/from-cloudevent-to-apache-kafka-records-part-two/
-to setup knative in GKE cluster
+to setup knative with Kafka in GKE cluster
 
 ### Create broker
 
@@ -80,6 +80,7 @@ KN_POC_BUCKET_RESULTS = "river-sand" # name of bucket with outgoing transfer job
 - app name *count-en-v2*, namespace knative-eventing
 - enable service, type ClusterIP, map port 80 to 8083 container port
 
+Scale apps to 1 replica instead of 3.
 Wait for workloads and services to become available.
 
 ### Create knative triggers
@@ -88,7 +89,7 @@ Create triggers - *gke-yamls/triggers.yaml*
 
 ### Test: send event to broker and check count-en app logs something
 
-Navigate to GKE service, pick broker-external, get the public IP.
+Navigate to GKE services, pick broker-external, get the public IP.
 Send event, from any terminal with internet access:
 
 ```
@@ -160,6 +161,8 @@ For input file, can use the ones in `${KN_POC_HOME}/inputfiles` or provide path 
 
 
 # TODO:
-count-en: code to get second transfer job name from env var
-router: code to get transfer job name and ingress IP from config file
+
++ count-en: code to get second transfer job name from env var
++ router: code to get transfer job name and ingress IP from config file
++ count-en: do really count EN words, instead of filtering out words from hardcoded list with 60 latin words.
 + docs about these
