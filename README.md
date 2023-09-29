@@ -1,3 +1,5 @@
+Diagram https://confluence.ncbi.nlm.nih.gov/display/~radetska/PoC+Diagram
+
 
 # Setup kn-PoC-v0.1 from scratch
 
