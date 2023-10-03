@@ -165,4 +165,5 @@ For input file, can use the ones in `${KN_POC_HOME}/inputfiles` or provide path 
 + count-en: code to get second transfer job name from env var
 + router: code to get transfer job name and ingress IP from config file
 + count-en: do really count EN words, instead of filtering out words from hardcoded list with 60 latin words.
++ jaegger
 + docs about these

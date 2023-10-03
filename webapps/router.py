@@ -19,8 +19,9 @@ async def on_startup(app):
     app["trabsfer_job_store"] = [
         {
             "ingress": "34.41.248.142:80",
-            "path": "knative-eventing%2Fcount-en-broker",
-            "job_name": "transferJobs/OPI8437548298833795632",
+            # "path": "knative-eventing%2Fcount-en-broker",
+            "outgoing_job_name": "transferJobs/OPI8437548298833795632",
+            "incoming_job_name": "transferJobs/OPI14932910461025069603",
             "project_id" :"charged-scholar-399420",
         }
     ]
@@ -102,7 +103,8 @@ async def call_test_event(request):
     for job_data in app["trabsfer_job_store"]:
         if job_data["ingress"] == resolved_ingress:
             return web.json_response(data={
-                "job_name": job_data["job_name"],
+                "outgoing_job_name": job_data["outgoing_job_name"],
+                "incoming_job_name": job_data["incoming_job_name"],
                 "project_id": job_data["project_id"],
                 "ingress": resolved_ingress
             })

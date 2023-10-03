@@ -47,11 +47,11 @@ def wait_on_transfer_job(transfer_operation_name):
             transfer_operation_name
         )
 
-async def trigger_results_transfer_job():
+async def trigger_results_transfer_job(job_name_to_transfer_back, project_id):
     client = storage_transfer_v1.StorageTransferServiceAsyncClient.from_service_account_json(GCP_CREDS_PATH)
     request = storage_transfer_v1.RunTransferJobRequest(
-        job_name="transferJobs/OPI14932910461025069603",  # need to pass this in initiation event
-        project_id="charged-scholar-399420",
+        job_name=job_name_to_transfer_back,
+        project_id=project_id,
     )
     operation = await client.run_transfer_job(request=request)
     return operation.operation.name
@@ -127,6 +127,8 @@ async def count_en(request):
         words_list_filename = data['words_list_filename']
         results_filename = data['results_filename']
         transfer_operation_name = data['transfer_operation_name']
+        job_name_to_transfer_back = data["incoming_job_name"]
+        project_id = data["project_id"]
     except (KeyError, TypeError, ValueError) as e:
         print(f"Cant unpack required params: {e}")
         raise web.HTTPBadRequest(
@@ -146,7 +148,7 @@ async def count_en(request):
     write_blob(RESULTS_BUCKET, f'results/{results_filename}', {"en_words": len(filtered_words)})
 
     # trigger results transfer job
-    operation_name = await trigger_results_transfer_job()
+    operation_name = await trigger_results_transfer_job(job_name_to_transfer_back, project_id)
     
     # version 2 additions
     wait_on_transfer_job(transfer_operation_name)

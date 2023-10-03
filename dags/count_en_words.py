@@ -15,10 +15,10 @@ from google.api_core.exceptions import AlreadyExists
 
 
 BASE_PATH = os.getenv('KN_POC_HOME', '/home/jane/Documents/airflow')
-FILE_PATH = f'{BASE_PATH}/inputfiles/lorem.txt'
+# FILE_PATH = f'{BASE_PATH}/inputfiles/lorem.txt'
 REF_DICT = f'{BASE_PATH}/textfiles/dict.txt'
-RESULTS_PATH = f'{BASE_PATH}/results/results_{}.txt'
-WORD_LIST_PATH = f'{BASE_PATH}/textfiles/words_list_{}.txt'
+RESULTS_PATH = BASE_PATH + '/results/results_{}.txt'
+WORD_LIST_PATH = BASE_PATH + '/textfiles/words_list_{}.txt'
 GCP_CREDS_PATH = f'{BASE_PATH}/dags/gcp-creds.json'
 
 default_args = {"start_date": datetime(2023, 8, 29)}
@@ -58,22 +58,6 @@ def count_en_words():
             json.dump({"words_list": list(words_set), "results_path": results_path}, f)
 
         return random_str
-    
-    # @task
-    # def trigger_data_transfer(*args, **kwargs):
-    #     client = storage_transfer_v1.StorageTransferServiceClient.from_service_account_json(GCP_CREDS_PATH)
-    #     request = storage_transfer_v1.RunTransferJobRequest(
-    #         job_name="transferJobs/OPI8437548298833795632",
-    #         project_id="charged-scholar-399420",
-    #     )
-    #     try:
-    #         operation = client.run_transfer_job(request=request)
-    #         print(operation.operation.name)
-    #         return operation.operation.name
-    #     except AlreadyExists:
-    #         print('Transfer already running')
-    #         # TODO get operation name?
-    #     return ''
 
     @task
     def trigger_data_transfer(*args, **kwargs):
@@ -86,13 +70,13 @@ def count_en_words():
 
         client = storage_transfer_v1.StorageTransferServiceClient.from_service_account_json(GCP_CREDS_PATH)
         request = storage_transfer_v1.RunTransferJobRequest(
-            job_name=job_data["job_name"],
+            job_name=job_data["outgoing_job_name"],
             project_id=job_data["project_id"],
         )
         try:
             operation = client.run_transfer_job(request=request)
             print(operation.operation.name)
-            return (operation.operation.name, job_data["ingress"])
+            return (operation.operation.name, job_data)
         except AlreadyExists:
             print('Transfer already running')
             # TODO get operation name?
@@ -104,7 +88,10 @@ def count_en_words():
         random_str = task_instance.xcom_pull(task_ids='create_words_list')
         results_filename = f'results_{random_str}.txt'
         words_list_filename = f'words_list_{random_str}.txt'
-        operation_name, ingress = task_instance.xcom_pull(task_ids='trigger_data_transfer')
+        operation_name, job_data = task_instance.xcom_pull(task_ids='trigger_data_transfer')
+        ingress = job_data["ingress"]
+        incoming_job_name = job_data["incoming_job_name"]
+        project_id = job_data["project_id"]
         response = requests.post(
             f'http://{ingress}/knative-eventing/count-en-broker',
             json={
@@ -113,6 +100,8 @@ def count_en_words():
                 "transfer_operation_name": operation_name,
                 "callback_broker": "http://kafka-broker-ingress.knative-eventing.svc.cluster.local/knative-eventing/fake-local-broker",
                 "callback_key": random_str,
+                "incoming_job_name": job_data["incoming_job_name"],
+                "project_id": job_data["project_id"]
             },
             headers={
                 'Content-Type': 'application/json',

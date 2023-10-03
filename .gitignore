@@ -4,5 +4,6 @@
 /**/__pycache__/*.*
 results/*.*
 dags/__pycache__/*.*
+dags/__pycache__/count_en_words.cpython-310.pyc
 dags/gcp-creds.json
 webapps/count-en/gcp-creds.json
