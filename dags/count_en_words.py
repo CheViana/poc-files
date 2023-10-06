@@ -15,8 +15,6 @@ from google.api_core.exceptions import AlreadyExists
 
 
 BASE_PATH = os.getenv('KN_POC_HOME', '/home/jane/Documents/airflow')
-# FILE_PATH = f'{BASE_PATH}/inputfiles/lorem.txt'
-REF_DICT = f'{BASE_PATH}/textfiles/dict.txt'
 RESULTS_PATH = BASE_PATH + '/results/results_{}.txt'
 WORD_LIST_PATH = BASE_PATH + '/textfiles/words_list_{}.txt'
 GCP_CREDS_PATH = f'{BASE_PATH}/dags/gcp-creds.json'
@@ -89,6 +87,9 @@ def count_en_words():
         results_filename = f'results_{random_str}.txt'
         words_list_filename = f'words_list_{random_str}.txt'
         operation_name, job_data = task_instance.xcom_pull(task_ids='trigger_data_transfer')
+        print('DATA:')
+        print(operation_name)
+        print(random_str)
         ingress = job_data["ingress"]
         incoming_job_name = job_data["incoming_job_name"]
         project_id = job_data["project_id"]

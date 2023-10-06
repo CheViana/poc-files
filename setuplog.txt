@@ -37,3 +37,6 @@ wget -O - -S --post-data '{"msg":"Hello from outside!"}' --header "Content-Type:
 wget -O - -S --post-data '{"msg":"Hello from localhost!"}' --header "Content-Type: application/json" --header "Ce-Id: 123131455" --header "Ce-Specversion: 1.0" --header "Ce-Type: heartbeat" --header "Ce-Source: command-line" http://localhost:7777/broker-count-en
 
 wget -O - -S --post-data '{"words_list_filename": "words_list_38nafypz.txt", "results_filename": "test2.txt", "transfer_operation": "transferJobs/OPI8437548298833795632_0000000001695166433"}' --header "Content-Type: application/json" --header "Ce-Id: 123131455" --header "Ce-Specversion: 1.0" --header "Ce-Type: count-en" --header "Ce-Source: command-line" http://localhost:8084/call?path=knative-eventing%2Fcount-en-broker
+
+
+curl --request POST -H "Content-Type: application/json" --data '{"words_list_filename": "words_list_6nh5wgel.txt","results_filename": "results_6nh5wgel.txt","transfer_operation_name": "transferOperations/charged-scholar-399420_transferJobs/OPI8437548298833795632_0000000001696522654","incoming_job_name": "transferJobs/OPI14932910461025069603","project_id": "charged-scholar-399420", "callback_broker": "http://34.41.248.142:80/knative-eventing/count-en-broker", "callback_key": "myrandomtest89083498"}' http://localhost:8085/run/filter_words

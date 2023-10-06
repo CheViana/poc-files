@@ -57,7 +57,7 @@ async def call_test_event(request):
         "Ce-Id": f"event_{get_random_str()}",
         "Ce-Specversion": "1.0",
         "Ce-Type": "count-en",
-        "Ce-Source": "local-dag-count-en-words",
+        "Ce-Source": "resolving-broker",
     }
     resolved_ingress = None
 

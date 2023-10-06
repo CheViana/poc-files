@@ -162,8 +162,17 @@ For input file, can use the ones in `${KN_POC_HOME}/inputfiles` or provide path 
 
 # TODO:
 
-+ count-en: code to get second transfer job name from env var
-+ router: code to get transfer job name and ingress IP from config file
 + count-en: do really count EN words, instead of filtering out words from hardcoded list with 60 latin words.
-+ jaegger
-+ docs about these
++ jaegger/prometeus for knative
+
+
+## Part four: Airflow in the cloud
+
+In the GKE cluster created before, scale nodes up to 5. Create namespace `airflow`. Apply `gke-yamls/storageclass-airflow.yaml` and make sure [DefaultStorageClass](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass) admission controller is enabled (it is enabled by default).
+
+Install [airflow using helm](https://airflow.apache.org/docs/helm-chart/stable/index.html):
+
+```
+helm upgrade --install airflow apache-airflow/airflow --namespace airflow --set executor=KubernetesExecutor
+```
+

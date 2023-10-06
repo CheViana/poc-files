@@ -34,23 +34,9 @@ async def hello(request):
 async def run(request):
     cmd = request.match_info['cmd']
     data = await request.json()
-    print(data)
-    try:
-        file_path = data['filepath']
-        email = data['email']
-        appversion = data.get("appversion", "1.0.0")
-        print(f"File path {file_path}, email {email}, cmd {cmd}")
-    except (KeyError, TypeError, ValueError) as e:
-        raise web.HTTPBadRequest(
-            text='Missing required values') from e
-
     dag_data = {
         "logical_date": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds'), # + "Z",
-        "conf": {
-            "filepath": file_path,
-            "email": email,
-            "appversion": appversion
-        },
+        "conf": data,
     }
     print(f"DAG data {dag_data}")
 
