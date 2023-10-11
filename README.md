@@ -16,7 +16,7 @@ Ensure this env var and env vars created further will be available throughout yo
 ### Create GKE cluster
 
 Create GCP project.
-Create GKE cluster - one zone, at least 3 nodes. 2 vCPU, 8Gb mem, disk type standard 100Gb is fine for one node.
+Create GKE cluster - one zone, at least 3 nodes. 2 vCPU, 8Gb mem, disk type standard or SSD 100Gb is fine. This is all for one node. Can do one node (or more) of type c2-standard-8.
 
 ### Bucket and transfer jobs
 
@@ -33,10 +33,9 @@ Create service account that has permissions to run transfer jobs (role Storage T
 
 ### Kafka and knative
 
-Follow 
-https://knative.dev/blog/articles/from-cloudevent-to-apach-kafka-records-part-one/
-https://knative.dev/blog/articles/from-cloudevent-to-apache-kafka-records-part-two/
-to setup knative with Kafka in GKE cluster
+Follow https://strimzi.io/quickstarts/ to install kafka in knative-eventing namespace, and use gke-yamls/kafka-cluster.yaml as kafka cluster resource instead of the one used in quickstart (kafka-single-persistent.yaml).
+Follow https://knative.dev/docs/install/yaml-install/eventing/install-eventing-with-yaml/#install-knative-eventing to install knative eventing, install all kafka conponents too: kafka sink, kafka broker, kafka event source. kafka-source-dispatcher will have 0 pods until some kafka sources are created.
+
 
 ### Create broker
 
