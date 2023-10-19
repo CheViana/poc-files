@@ -1,0 +1,64 @@
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: trigger-reality
+  namespace: knative-eventing
+spec:
+  broker: broker-reality
+  filter:
+    attributes:
+      kafkaheadercetype: call
+  subscriber:
+    ref:
+      apiVersion: eventing.knative.dev/v1alpha1
+      kind: KafkaSink
+      name: sink-reality
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: wonderland-trigger-responder
+  namespace: knative-eventing
+spec:
+  broker: wonderland-broker
+  filter:
+    attributes:
+      kafkaheadercetype: call
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: responder-service
+    uri: /responder/
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: reply-trigger
+  namespace: knative-eventing
+spec:
+  broker: broker-reality
+  filter:
+    attributes:
+      type: reply
+  subscriber:
+    ref:
+      apiVersion: eventing.knative.dev/v1alpha1
+      kind: KafkaSink
+      name: reply-sink
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: trigger-reply-wonder
+  namespace: knative-eventing
+spec:
+  broker: wonderland-broker
+  filter:
+    attributes:
+      type: reply
+  subscriber:
+    ref:
+      apiVersion: eventing.knative.dev/v1alpha1
+      kind: KafkaSink
+      name: sink-wonder-reply

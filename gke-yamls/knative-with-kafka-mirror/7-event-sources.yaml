@@ -1,0 +1,50 @@
+apiVersion: sources.knative.dev/v1beta1
+kind: KafkaSource
+metadata:
+  name: input-source
+  namespace: knative-eventing
+spec:
+  consumerGroup: knative-group
+  bootstrapServers:
+  - my-cluster-kafka-bootstrap.knative-eventing:9092 # note the kafka namespace
+  topics:
+  - input-topic
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: broker-reality
+---
+apiVersion: sources.knative.dev/v1beta1
+kind: KafkaSource
+metadata:
+  name: wonderland-source
+  namespace: knative-eventing
+spec:
+  consumerGroup: knative-group
+  bootstrapServers:
+  - my-cluster2-kafka-bootstrap.knative-eventing:9092 # note the kafka namespace
+  topics:
+  - my-cluster.topic1
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: wonderland-broker
+---
+apiVersion: sources.knative.dev/v1beta1
+kind: KafkaSource
+metadata:
+  name: reply-source
+  namespace: knative-eventing
+spec:
+  consumerGroup: knative-group
+  bootstrapServers:
+  - my-cluster-kafka-bootstrap.knative-eventing:9092 # note the kafka namespace
+  topics:
+  - my-cluster2.topic2
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: broker-reality

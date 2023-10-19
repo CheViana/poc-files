@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  bootstrap.servers: my-cluster2-kafka-bootstrap.knative-eventing:9092
+  default.topic.partitions: "1"
+  default.topic.replication.factor: "1"
+kind: ConfigMap
+metadata:
+  name: wonderland-kafka-broker-config
+  namespace: knative-eventing

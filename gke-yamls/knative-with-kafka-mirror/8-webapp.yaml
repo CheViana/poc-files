@@ -1,0 +1,5 @@
+build and deploy webapps/responder:
+- name responder
+- namespace knative
+- port 80 map to 8083
+- expose ClusterIP

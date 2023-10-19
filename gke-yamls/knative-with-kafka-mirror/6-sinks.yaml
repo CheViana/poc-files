@@ -1,0 +1,30 @@
+apiVersion: eventing.knative.dev/v1alpha1
+kind: KafkaSink
+metadata:
+  name: sink-reality
+  namespace: knative-eventing
+spec:
+  topic: topic1
+  bootstrapServers:
+   - my-cluster-kafka-bootstrap.knative-eventing:9092
+---
+apiVersion: eventing.knative.dev/v1alpha1
+kind: KafkaSink
+metadata:
+  name: reply-sink
+  namespace: knative-eventing
+spec:
+  topic: reply-topic
+  bootstrapServers:
+   - my-cluster-kafka-bootstrap.knative-eventing:9092
+---
+apiVersion: eventing.knative.dev/v1alpha1
+kind: KafkaSink
+metadata:
+  name: sink-wonder-reply
+  namespace: knative-eventing
+spec:
+  topic: topic2
+  bootstrapServers:
+   - my-cluster2-kafka-bootstrap.knative-eventing:9092
+---

@@ -1,0 +1,22 @@
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  name: broker-reality
+  namespace: knative-eventing
+  annotations:
+    eventing.knative.dev/broker.class: Kafka
+spec: {}
+---
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  name: wonderland-broker
+  namespace: knative-eventing
+  annotations:
+    eventing.knative.dev/broker.class: Kafka
+spec:
+  config:
+    apiVersion: v1
+    kind: ConfigMap
+    name: wonderland-kafka-broker-config
+    namespace: knative-eventing
