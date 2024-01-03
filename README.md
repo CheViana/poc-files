@@ -1,6 +1,3 @@
-Diagram https://confluence.ncbi.nlm.nih.gov/display/~radetska/PoC+Diagram
-
-This is a primitive PoC for cross cluster data processing. Diagram shows the parts of it. Some parts in PoC are not like what they would be in better circumstance. In better circumstance, it would be an ideantical setup in each cluster: airflow with DAGs, DAG listens to kafka topic (for launch, and instead of waiting on file), knative broker and triggers, and data storage with transfer jobs. 
 
 
 # Setup kn-PoC-v0.1 from scratch
@@ -169,7 +166,6 @@ For input file, can use the ones in `${KN_POC_HOME}/inputfiles` or provide path 
 # TODO:
 
 + count-en: do really count EN words, instead of filtering out words from hardcoded list with 60 latin words.
-<<<<<<< HEAD
 + jaegger/prometeus for knative
 
 
@@ -183,6 +179,3 @@ Install [airflow using helm](https://airflow.apache.org/docs/helm-chart/stable/i
 helm upgrade --install airflow apache-airflow/airflow --namespace airflow --set executor=KubernetesExecutor
 ```
 
-=======
-+ docs about these
->>>>>>> 68cc5f672c933886ddab9f9821a5925b72fcf7a1
