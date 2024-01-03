@@ -1,5 +1,5 @@
-build and deploy webapps/responder:
+build and deploy webapps/responder https://github.com/CheViana/poc-files/blob/main/webapps/responder/Dockerfile :
 - name responder
-- namespace knative
+- namespace knative-eventing
 - port 80 map to 8083
 - expose ClusterIP
